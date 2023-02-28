@@ -1,43 +1,75 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:qrreaderfer/providers/scan_list_provider.dart';
+import 'dart:async';
 
-class MapPageScreen extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:qrreaderfer/providers/db_provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class MapPageScreen extends StatefulWidget {
   const MapPageScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final ScanListProvider scanProvider =
-        Provider.of<ScanListProvider>(context, listen: false);
-    final scans = scanProvider.scans;
+  State<MapPageScreen> createState() => _MapPageScreenState();
+}
 
-    return ListView.builder(
-      itemCount: scans.length,
-      itemBuilder: (context, index) => Dismissible(
-        key: UniqueKey(),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.indigo,
-            child: Text(
-              '${scans[index].id}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+class _MapPageScreenState extends State<MapPageScreen> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+  MapType mapType = MapType.normal;
+
+  @override
+  Widget build(BuildContext context) {
+    final ScanResultModel scan =
+        ModalRoute.of(context)?.settings.arguments as ScanResultModel;
+
+    final CameraPosition firstPoint = CameraPosition(
+      target: scan.getLatLng(),
+      zoom: 14.4746,
+    );
+
+    const CameraPosition _kLake = CameraPosition(
+      bearing: 192.8334901395799,
+      target: LatLng(37.43296265331129, -122.08832357078792),
+      tilt: 59.440717697143555,
+      zoom: 17.151926040649414,
+    );
+
+    Set<Marker> markers = Set<Marker>();
+    markers.add(Marker(
+        markerId: const MarkerId('geo-location'), position: scan.getLatLng()));
+
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final GoogleMapController controller = await _controller.future;
+              controller
+                  .animateCamera(CameraUpdate.newCameraPosition(firstPoint));
+            },
+            icon: const Icon(Icons.location_history),
           ),
-          title: const Text(
-            'Dirección de localización',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(scans[index].valor),
-          trailing: const Icon(
-            Icons.keyboard_arrow_right_rounded,
-          ),
-          onTap: () {
-            print(scans[index].id);
-          },
-        ),
+        ],
+      ),
+      body: GoogleMap(
+        myLocationButtonEnabled: false,
+        mapType: mapType,
+        initialCameraPosition: firstPoint,
+        markers: markers,
+        onMapCreated: (controller) {
+          _controller.complete(controller);
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print('Change layer');
+          if(mapType == MapType.normal){
+            mapType = MapType.satellite;
+          } else {
+            mapType = MapType.normal;
+          }
+          setState(() { });
+         },
+        child: const Icon(Icons.layers),
       ),
     );
   }

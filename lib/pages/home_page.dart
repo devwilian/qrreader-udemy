@@ -5,6 +5,7 @@ import 'package:qrreaderfer/pages/pages.dart';
 import 'package:qrreaderfer/providers/db_provider.dart';
 import 'package:qrreaderfer/providers/scan_list_provider.dart';
 import 'package:qrreaderfer/providers/ui_provider.dart';
+import 'package:qrreaderfer/widgets/scan_tiles.dart';
 import 'package:qrreaderfer/widgets/widgets.dart';
 
 class HomePageScreen extends StatelessWidget {
@@ -58,7 +59,7 @@ class HomePageScreen extends StatelessWidget {
       ),
       body: const _HomePageBody(),
       bottomNavigationBar: const CustomNavigationBarWidget(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: const CustomFloatingButtonWidget(),
     );
   }
@@ -76,10 +77,13 @@ class _HomePageBody extends StatelessWidget {
     switch (currentIndex) {
       case 0:
         scanListProvider.getScanByType('geo');
-        return const MapPageScreen();
+        return const DireccionesLocalizacionesScreen();
       case 1:
         scanListProvider.getScanByType('http');
-        return const DireccionesPageScreen();
+        return const DireccionesWebScreen();
+      case 2:
+        scanListProvider.getScanByType('any');
+        return const ScanTiles(tipo: 'any');
       default:
         return Container();
     }

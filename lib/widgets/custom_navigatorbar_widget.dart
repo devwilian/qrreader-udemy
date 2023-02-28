@@ -21,6 +21,10 @@ class CustomNavigationBarWidget extends StatelessWidget {
           icon: Icon(Icons.compass_calibration),
           label: 'Direcciones',
         ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.text_fields_rounded),
+          label: 'Texto',
+        ),
       ],
     );
   }

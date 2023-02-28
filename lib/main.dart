@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qrreaderfer/pages/home_page.dart';
 import 'package:qrreaderfer/pages/mapa_page.dart';
-import 'package:qrreaderfer/providers/db_provider.dart';
 import 'package:qrreaderfer/providers/scan_list_provider.dart';
 import 'package:qrreaderfer/providers/ui_provider.dart';
 import 'package:qrreaderfer/theme/theme_primary.dart';
